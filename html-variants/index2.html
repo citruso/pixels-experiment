@@ -1,0 +1,72 @@
+<html>
+  <head>
+    <title>Pixels</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      canvas {
+        border: 1px solid;
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas></canvas>
+    <script type="text/javascript">
+      function weightedRandom(prob) {
+        let i,
+          sum = 0,
+          r = Math.random()
+        for (i in prob) {
+          sum += prob[i]
+          if (r <= sum) return i
+        }
+      }
+
+      function draw() {
+        let args, magic
+        let a, b
+        ctx.clearRect(0, 0, w, h)
+        let imageData = ctx.getImageData(0, 0, w, h)
+
+        for (let i = 0; i < imageData.data.length; i += 4) {
+          //magic = ~~((i/8)/h) % 10;
+          //iter = i - (3*(i/4))
+          //x = i - (w*h-1)
+          a = ~~(i / h) % 10
+          b = ~~(i / w) % 10
+
+          if (a > 49) a = a - (a - (100 - a))
+          if (b > 49) b = b - (b - (100 - b))
+
+          args =
+            colors[
+              weightedRandom({
+                WHITE: (0 + a + b) / 10,
+                BLACK: (100 - a - b) / 10,
+              })
+            ]
+
+          imageData.data[i] = args[0] // reg
+          imageData.data[i + 1] = args[1] // green
+          imageData.data[i + 2] = args[2] // blue
+          imageData.data[i + 3] = 255 // alpha
+        }
+        ctx.putImageData(imageData, 0, 0)
+        window.requestAnimationFrame(draw)
+      }
+      var canvas = document.body.children[0]
+      var ctx = canvas.getContext("2d")
+      var [w, h] = [canvas.width, canvas.height]
+
+      var colors = {
+        WHITE: [255, 255, 255],
+        BLACK: [0, 0, 0],
+      }
+
+      draw()
+    </script>
+  </body>
+</html>

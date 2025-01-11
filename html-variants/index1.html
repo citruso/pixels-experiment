@@ -1,0 +1,52 @@
+<html>
+  <head>
+    <title>Pixels</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        box-sizing: border-box;
+        user-select: none;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+      }
+      canvas {
+        border: 1px solid;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas width="1920" height="1080"></canvas>
+    <script type="text/javascript">
+      var canvas = document.body.children[0]
+      var ctx = canvas.getContext("2d")
+      var [w, h] = [canvas.width, canvas.height]
+
+      function draw() {
+        let args, magic
+        ctx.clearRect(0, 0, w, h)
+        let imageData = ctx.getImageData(0, 0, w, h)
+        for (let i = 0; i < imageData.data.length; i += 4) {
+          magic = ~~(i / 8 / h) % 10
+
+          if (Math.random() > (0 + magic) / 1000) args = [0, 0, 0]
+          else if (Math.random() < (100 - magic) / 1000) args = [255, 255, 255]
+
+          imageData.data[i] = args[0] // reg
+          imageData.data[i + 1] = args[1] // green
+          imageData.data[i + 2] = args[2] // blue
+          imageData.data[i + 3] = 255 // alpha
+        }
+        ctx.putImageData(imageData, 0, 0)
+        window.requestAnimationFrame(draw)
+      }
+
+      draw()
+    </script>
+  </body>
+</html>
